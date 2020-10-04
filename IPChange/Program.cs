@@ -12,6 +12,7 @@ namespace IPChange
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine($"Welcome to the IP Change tool. {Environment.NewLine}");
             Console.ForegroundColor = ConsoleColor.White;
+
             do
             {
                 // We get either DHCP or Static from the user.
