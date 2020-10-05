@@ -24,7 +24,6 @@ namespace IPChange
                 Console.WriteLine("Do you want to set DHCP or Static?");
                 Console.WriteLine("1 = DHCP");
                 Console.WriteLine("2 = Static");
-                Console.WriteLine();
                 //Get the user selection.
                 var userSelection = Console.ReadKey();
                 // If it is either 1 or 2 we can continue.
@@ -32,11 +31,13 @@ namespace IPChange
                 {
                     // DHCP
                     case ConsoleKey.D1:
+                    case ConsoleKey.NumPad1:
                         mode = Mode.DHCP;
                         userSelectionValid = true;
                         break;
                     // Static
                     case ConsoleKey.D2:
+                    case ConsoleKey.NumPad2:
                         mode = Mode.Static;
                         userSelectionValid = true;
                         break;
@@ -113,18 +114,39 @@ namespace IPChange
             // Onlt true if the IP address is valid.
             bool userSelectionValid;
             // the IP the user enters and will be returned if correct.
-            string userIp;
+            string userIp = string.Empty;
             do
             {
                 // We ask the user for input
-                Console.WriteLine($"Please enter {type} or select from this list:" + Environment.NewLine);
-                // We write to console a list of AppSettings with a 0-# for user section.
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine(Environment.NewLine + type + Environment.NewLine);
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"Enter in an address, select from this list");
+                if (type != StaticTypes.IP)
+                    Console.WriteLine("or press enter to skip:");
+                // We write to console a list of AppSettings with a 0-99 for user section.
                 Predefined.OutputList();
                 Console.WriteLine();
                 // Get user input...
                 var userInput = Console.ReadLine();
+                // Only for Subnet, Gateway or DNS...
+                if (string.IsNullOrWhiteSpace(userInput) && type != StaticTypes.IP)
+                    switch (type)
+                    {
+                        case StaticTypes.Subnet:
+                            userIp = "255.255.255.0";
+                            break;
+                        case StaticTypes.Gateway:
+                            userIp = "192.168.0.1";
+                            break;
+                        case StaticTypes.DNS:
+                            userIp = "192.168.0.1";
+                            break;
+                    }
                 // We can only accept 0 - 99, otherwise it'll be a full IP address (e.g. 192.168.0.1)
-                if (userInput.Length < 2)
+                else if (userInput.Length < 2)
                 // We get it from the list
                 {
                     userIp = Predefined.GetPredefinedOrEmpty(userInput);
